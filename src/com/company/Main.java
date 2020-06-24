@@ -17,18 +17,42 @@ public class Main {
 	    //Printing the gameBoard
         printGameBoard(gameBoard);
 
-        while (true){
         //Seting up writing possibility in console
-        Scanner scan = new Scanner(System.in);
+        while (true){
         System.out.println("Enter your placment (1-9)");
-        int playerPos = scan.nextInt();
 
+        Scanner scan = new Scanner(System.in);
+        int playerPos = scan.nextInt();
+        //if position is already occupate
+        while (playerPositions.contains(playerPos) || cpuPositions.contains(playerPos)){
+            playerPos = scan.nextInt();
+        }
         placePiece(gameBoard, playerPos, "player");
+
+        //Check results
+        String result = checkWinner();
+            if(result.length() > 0){
+                System.out.println(result);
+                break;
+            }
+        //  **CPU ROUND** //
         Random rand = new Random();
         int cpuPos = rand.nextInt(9) + 1;
-        placePiece(gameBoard, cpuPos, "cpu");
 
-        printGameBoard(gameBoard); }
+        //if position is already occupate
+            while (playerPositions.contains(cpuPos) || cpuPositions.contains(cpuPos)){
+                cpuPos = rand.nextInt(9) + 1;}
+
+        placePiece(gameBoard, cpuPos, "cpu");
+        printGameBoard(gameBoard);
+
+        //Check results
+        result = checkWinner();
+        if(result.length() > 0){
+            System.out.println(result);
+            break;
+            }
+        }
 
 
 
@@ -50,8 +74,12 @@ public class Main {
 
         if(user.equals("player")){
             symbol = 'X';
+            playerPositions.add(pos);
         } else if(user.equals("cpu")){
-            symbol = 'O'; }
+            symbol = 'O';
+            cpuPositions.add(pos);
+        }
+
 
 
         switch(pos) {
@@ -89,7 +117,7 @@ public class Main {
     }
 
     public static String checkWinner() {
-        List topRow = Arrays.asList(1, 3, 5);
+        List topRow = Arrays.asList(1, 2, 3);
         List midRow = Arrays.asList(4, 5, 6);
         List botRow = Arrays.asList(7, 8, 9);
         List leftColumn = Arrays.asList(1, 4, 7);
@@ -108,11 +136,23 @@ public class Main {
         winningConditions.add(cross1);
         winningConditions.add(cross2);
 
+        for (List l : winningConditions){
+            if (playerPositions.containsAll(l)){
+                return  "Congratulation! You won!";
+            }else if (cpuPositions.containsAll(l)){
+                return "CPU WIN! Sorry, try again";
+            }else if (playerPositions.size() + cpuPositions.size() == 9){
+              return "draw";
+
+            }
+        }
+
 
         return "";
 
 
     }
+
 
 
 
